@@ -26,7 +26,7 @@ router.get('/users', (req, res) => {
     result
     })
 
-   })
+})
   } catch(e){
      res.json({
         status: 404,
