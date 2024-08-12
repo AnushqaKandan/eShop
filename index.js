@@ -1,6 +1,9 @@
 import express from 'express'
 import path from 'path'
 import {connection as db} from './config/index.js'
+import {createToken} from './middleware/AuthenticateUser.js'
+import {hash} from 'bcrypt'
+import bodyParser from 'body-parser'
 // Create an express app
 const app = express()
 const port = +process.env.PORT  || 4000
@@ -11,6 +14,7 @@ app.use(router, express.static('./static'),
 express.json(),
 express.urlencoded({extended: true})
 )
+router.use(bodyParser.json())
 // Endpoint
 router.get('^/$|/eShop', (req, res) => {
     res.status(200).sendFile(path.resolve('./static/html/index.html'))
@@ -54,6 +58,51 @@ router.get('/user/:id', async (req, res) => {
             msg: e.message
          })
     }
+})
+
+router.post('/register', async(req, res) => {
+    try{
+       let data = req.body
+       if(data.pwd)
+        data.pwd = await hash(data.pwd, 12)
+    // Payload
+    let user = {
+        emailAdd: data.emailAdd,
+        pwd: data.pwd
+    }
+    let strQry = `
+    INSERT INTO Users
+    SET ?; `
+    db.query(strQry, [data], (err) => {})
+    } catch(e) {
+
+    }
+})
+
+router.patch('/user/:id', async (req, res) => {
+    try{
+        let data = req.body
+        if(data.pwd) {
+            data.pwd = await hash(data.pwd, 12)
+        }
+    const strQry = `
+    UPDATE Users
+    SET ?
+    WHERE userID = ${req.params.id}
+    `
+    db.query(strQry, [data], (err) => {
+        if(err) throw new Error('Unable to update a user')
+            res.json({
+        status: res.statusCode,
+        msg: "The user record was updated"
+      })
+    })
+  } catch(e) {
+    res.json({
+        status: 400,
+        msg: e.message
+    })
+  }
 })
 
 router.get('*', (req, res) => {

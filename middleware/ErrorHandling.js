@@ -8,7 +8,7 @@ function errorHandling(err, req, res, next) {
             }
         )
     }
-    next()
+   next()
 }
 export {
     errorHandling
