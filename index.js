@@ -14,14 +14,16 @@ app.use(router, express.static('./static'),
 express.json(),
 express.urlencoded({extended: true})
 )
+// Use line 18 to apply bodyparser.json to all routes. Parse incoming request bodies that are in JSON format.
 router.use(bodyParser.json())
 // Endpoint
+// get allows us to retrieve data. Better to use it to retrieve data than to send data
 router.get('^/$|/eShop', (req, res) => {
     res.status(200).sendFile(path.resolve('./static/html/index.html'))
 })
 router.get('/users', (req, res) => {
   try{
-    const strQry = `SELECT firstName, lastName, age, emailAdd FROM Users;`
+    const strQry = `SELECT firstName, lastName, age, emailAdd, userRole, ProfileURL FROM Users;`
     db.query(strQry, (err, result) => {
         // `Unable to fetch all users`
         if(err) throw new Error(err)
@@ -60,6 +62,7 @@ router.get('/user/:id', async (req, res) => {
     }
 })
 
+// Allowa you to send data
 router.post('/register', async(req, res) => {
     try{
        let data = req.body
@@ -79,6 +82,7 @@ router.post('/register', async(req, res) => {
     }
 })
 
+// Allows you to update data. Always use the same request when updating unlike put that uses mutiple request. Therefore better to use Patch. 
 router.patch('/user/:id', async (req, res) => {
     try{
         let data = req.body
@@ -130,7 +134,7 @@ router.post('/login', (req, res) => {
     try{
         const{ emailAdd, pwd } = req.body
         const strQry = `
-        SELECT userID, firstName, age, emailAdd, pwd
+        SELECT userID, firstName, age, emailAdd, pwd, userRole, ProfileURL
         FROM Users
         WHERE emailAdd = '${emailAdd}';
         `
