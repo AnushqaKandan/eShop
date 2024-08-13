@@ -1,47 +1,30 @@
-import express from 'express'
-import path from 'path'
-import {connection as db} from './config/index.js'
-import {createToken} from './middleware/AuthenticateUser.js'
-import {hash} from 'bcrypt'
-import bodyParser from 'body-parser'
-// Create an express app
-const app = express()
-const port = +process.env.PORT  || 4000
-const router = express.Router()
+import { connection as db } from '../config/index.js'
+import { createToken} from '../middleware/AuthenticateUser.js'
+import {compare, hash } from 'bcrypt'
 
-// Middleware
-app.use(router, express.static('./static'),
-express.json(),
-express.urlencoded({extended: true})
-)
-// Use line 18 to apply bodyparser.json to all routes. Parse incoming request bodies that are in JSON format.
-router.use(bodyParser.json())
-// Endpoint
-// get allows us to retrieve data. Better to use it to retrieve data than to send data
-router.get('^/$|/eShop', (req, res) => {
-    res.status(200).sendFile(path.resolve('./static/html/index.html'))
-})
-router.get('/users', (req, res) => {
-  try{
-    const strQry = `SELECT firstName, lastName, age, emailAdd, userRole, ProfileURL FROM Users;`
-    db.query(strQry, (err, result) => {
-        // `Unable to fetch all users`
-        if(err) throw new Error('Issue when retrieving all users.')
-       res.json({
-    status: res.statusCode,
-    result
-    })
-
-})
-  } catch(e){
-     res.json({
-        status: 404,
-        msg: e.message
-     })
-  }
-})
-
-router.get('/user/:id', async (req, res) => {
+class Users {
+    fetchUsers(req, res) {
+        try{
+            const strQry = `SELECT firstName, lastName, age, emailAdd, userRole, ProfileURL 
+            FROM Users
+            WHERE userID= ${req.params.id};`
+            db.query(strQry, (err, result) => {
+                // `Unable to fetch all users`
+                if(err) throw new Error('Issue when retrieving all users.')
+               res.json({
+            status: res.statusCode,
+            result
+            })
+        
+        })
+          } catch(e){
+             res.json({
+                status: 404,
+                msg: e.message
+             })
+          }
+    }
+fetchUsers(req, res) {
     try {
         const strQry = `SELECT userID, firstName, lastName, age, emailAdd, userRole, ProfileURL
         FROM Users WHERE userID = ${req.params.id};`
@@ -60,30 +43,28 @@ router.get('/user/:id', async (req, res) => {
             msg: e.message
          })
     }
-})
+}
 
-// Allows you to send data
-router.post('/register', async(req, res) => {
+ async registerUser(req, res) {
     try{
-       let data = req.body
-       if(data.pwd)
-        data.pwd = await hash(data.pwd, 12)
-    // Payload
-    let user = {
-        emailAdd: data.emailAdd,
-        pwd: data.pwd
-    }
-    let strQry = `
-    INSERT INTO Users
-    SET ?; `
-    db.query(strQry, [data], (err) => {})
-    } catch(e) {
+        let data = req.body
+        if(data.pwd)
+         data.pwd = await hash(data.pwd, 12)
+     // Payload
+     let user = {
+         emailAdd: data.emailAdd,
+         pwd: data.pwd
+     }
+     let strQry = `
+     INSERT INTO Users
+     SET ?; `
+     db.query(strQry, [data], (err) => {})
+     } catch(e) {
+ 
+     }
+ }
 
-    }
-})
-
-// Allows you to update data. Always use the same request when updating unlike put that uses mutiple request. Therefore better to use Patch. 
-router.patch('/user/:id', async (req, res) => {
+ async updateUser(req, res) {
     try{
         let data = req.body
         if(data.pwd) {
@@ -107,9 +88,9 @@ router.patch('/user/:id', async (req, res) => {
         msg: e.message
     })
   }
-})
+ }
 
-router.delete('/user/:id', (req, res) => {
+ deleteUser(req, res) {
     try{
         const strQry = `
         DELETE FROM Users
@@ -128,9 +109,9 @@ router.delete('/user/:id', (req, res) => {
             msg: e.message
          })
     }
-})
+ }
 
-router.post('/login', (req, res) => {
+ async login(req, res) {
     try{
         const{ emailAdd, pwd } = req.body
         const strQry = `
@@ -173,17 +154,13 @@ router.post('/login', (req, res) => {
             msg: e.message
          })
     }
-})
+ }
+}
+
+export{
+    Users
+}
 
 
-router.get('*', (req, res) => {
-    res.json({
-        status: 404,
-        msg: 'Resource not found'
-    })
-})
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-})
 
