@@ -1,5 +1,4 @@
 import express from 'express'
-import path from 'path'
 import bodyParser from 'body-parser'
 import {user} from '../model/User.js'
 
@@ -28,3 +27,7 @@ userRouter.delete('./user/:id', (req, res) => {
     user.deleteUser(req, res)
 })
 
+export{
+    express,
+    userRouter
+}
