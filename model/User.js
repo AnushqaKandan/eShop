@@ -7,7 +7,6 @@ class Users {
         try{
             const strQry = `SELECT firstName, lastName, age, emailAdd, userRole, ProfileURL FROM Users;`
             db.query(strQry, (err, result) => {
-                // `Unable to fetch all users`
                 if(err) throw new Error('Issue when retrieving all users.')
                res.json({
             status: res.statusCode,
@@ -22,7 +21,7 @@ class Users {
              })
           }
     }
-fetchUsers(req, res) {
+fetchUser(req, res) {
     try {
         const strQry = `SELECT userID, firstName, lastName, age, emailAdd, userRole, ProfileURL
         FROM Users WHERE userID = ${req.params.id};`

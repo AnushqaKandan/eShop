@@ -1,5 +1,5 @@
-import {Users} from "./User"
-import {Products} from "./Products"
+import {Users} from "./User.js"
+import {Products} from "./Products.js"
 
 const users = new Users()
 const products = new Products()

@@ -1,6 +1,6 @@
 import express from 'express'
 import bodyParser from 'body-parser'
-import { products } from '../model/Products.js'
+import { products } from '../model/index.js'
 import { verifyAToken } from '../middleware/AuthenticateUser.js'
 
 
