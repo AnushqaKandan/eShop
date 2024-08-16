@@ -4,13 +4,13 @@ class Products{
     fetchProducts(req, res) {
         try{
             const strQry = `SELECT productID, prodName, category, prodDescription, prodURL, amount
-            FROM Producst;`
-            db.query(strQry, (err, result) => {
+            FROM Products;`
+            db.query(strQry, (err, results) => {
                 // `Unable to fetch all Products`
-                if(err) throw new Error('Issue when retrieving all products.')
+                if(err) throw new Error('Unable to fetch all products.')
                res.json({
             status: res.statusCode,
-            result
+            results
             })
         
         })
@@ -22,17 +22,41 @@ class Products{
           }
     }
 
-    fetchProducts(req, res) {
+recentProducts(req, res) {
+    try{
+        const strQry = `SELECT productID, prodName, category, prodDescription, prodURL, amount
+        FROM Products
+        ORDER BY productID DESC
+        LIMIT 5;`
+        db.query(strQry, (err, results) => {
+            // `Unable to fetch all Products`
+            if(err) throw new Error('Unable to fetch all products.')
+           res.json({
+        status: res.statusCode,
+        results
+        })
+    
+    })
+
+    } catch(e){
+        res.json({
+            status: 404,
+            msg: e.message
+         })
+    }
+}
+
+    fetchProduct(req, res) {
         try {
             const strQry = `SELECT productID, prodName, category, prodDescription, prodURL, amount
-            FROM Producst 
+            FROM Products 
             WHERE productID = ${req.params.id};`
             
             db.query(strQry, (err, result) => {
                 if(err) throw new Error(`Unable to fetch product with id ${req.params.id}`)
                 res.json({
                     status: res.statusCode,
-                    result
+                    result: result[0]
                 })
             })
         
@@ -43,32 +67,27 @@ class Products{
              })
         }
     }
-
-    async AddProducts(req, res) {
+     addProducts(req, res) {
         try{
-            let data = req.body
-            if(data.prodURL)
-             data.prodURL = await hash(data.prodURL, 12)
-         // Payload
-         let product = {
-             prodDescription: data.prodDescription,
-             prodURL: data.prodURL
-         }
-         let strQry = `
-         INSERT INTO Products
-         SET ?; `
-         db.query(strQry, [data], (err) => {})
+           const strQry = `INSERT INTO Products SET ?;`
+
+        db.query(strQry, [req.body], (err) => {
+            if(err) throw new Error('Unable to add a product')
+            res.json({
+           status: res.statusCode, 
+          msg: 'Product was added'
+            })
+        })
          } catch(e) {
-     
+            res.json({
+                status: 400,
+                msg: e.message 
+            })
          }
      }
     
-     async updateProducts(req, res) {
+    updateProducts(req, res) {
         try{
-            let data = req.body
-            if(data.prodURL) {
-                data.prodURL = await hash(data.prodURL, 12)
-            }
         const strQry = `
         UPDATE Products
         SET ?
@@ -78,7 +97,7 @@ class Products{
             if(err) throw new Error('Unable to update a product')
                 res.json({
             status: res.statusCode,
-            msg: "The product record was updated"
+            msg: 'The product was updated'
           })
         })
       } catch(e) {
@@ -96,10 +115,10 @@ class Products{
             WHERE productID = ${req.params.id};
             `
             db.query(strQry, (err) => {
-             if (err) throw new Error('To delete a product, please review your delete query.')
+             if (err) throw new Error('Unable to delete a product.')
              res.json({
             status: res.statusCode,
-            msg: "A product\'s information was removed."
+            msg: "A product was removed."
             })
           })
         } catch(e) {
@@ -110,6 +129,8 @@ class Products{
         }
      }
     
-    
+}
 
+export{
+    Products
 }
