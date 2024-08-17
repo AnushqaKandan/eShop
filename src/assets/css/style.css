@@ -27,7 +27,11 @@
     font-weight: bold;
     color: #2c3e50;
   }
-  
-  nav a.router-link-exact-active {
-    color: #42b983;
-  }
+
+
+  /* Logo */
+img[alt='logo'] {
+    aspect-ratio: 1;
+    width: 5rem;
+       
+}
