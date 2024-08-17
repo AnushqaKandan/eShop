@@ -14,7 +14,6 @@ function createToken(user) {
    }
 )}
 
-
 function verifyAToken(req, res, next) {
     const token = req?.header["authorization"]
     if(token) {

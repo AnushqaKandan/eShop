@@ -11,7 +11,7 @@ userRouter.get('/', (req, res) => {
 })
 
 userRouter.get('/:id', (req, res) => {
-    users.fetchUsers(req, res)
+    users.fetchUser(req, res)
 })
 
 
@@ -19,7 +19,7 @@ userRouter.post('/register', (req, res) => {
     users.registerUser(req, res)
 })
 
-userRouter.patch('/:id,', (req, res) => {
+userRouter.patch('/:id', (req, res) => {
 users.updateUser(req, res)
 })
 

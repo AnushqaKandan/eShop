@@ -67,7 +67,7 @@ recentProducts(req, res) {
              })
         }
     }
-     addProducts(req, res) {
+     addProduct(req, res) {
         try{
            const strQry = `INSERT INTO Products SET ?;`
 
@@ -86,7 +86,7 @@ recentProducts(req, res) {
          }
      }
     
-    updateProducts(req, res) {
+    updateProduct(req, res) {
         try{
         const strQry = `
         UPDATE Products
@@ -108,7 +108,7 @@ recentProducts(req, res) {
       }
      }
     
-     deleteProducts(req, res) {
+     deleteProduct(req, res) {
         try{
             const strQry = `
             DELETE FROM Products

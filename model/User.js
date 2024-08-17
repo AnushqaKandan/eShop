@@ -34,6 +34,7 @@ fetchUser(req, res) {
             })
         })
     
+        
     } catch (e) { 
         res.json({
             status: 404,
